@@ -11,10 +11,11 @@
     ],
     "author": "Microsoft Corporation",
     "version": {
-        "Major": 1,
+        "Major": 2,
         "Minor": 134,
         "Patch": 0
     },
+    "preview": true,
     "runsOn": [
         "Agent",
         "DeploymentGroup"
@@ -58,7 +59,7 @@
                 "temp": "Temporary Keychain",
                 "custom": "Custom Keychain"
             },
-            "helpMarkDown": "Select the keychain in which to install the Apple certificate. A temporary keychain will always be deleted after the build or release is complete.",
+            "helpMarkDown": "Select the keychain in which to install the Apple certificate. For hosted builds, use `Temporary Keychain`. A temporary keychain will always be deleted after the build or release is complete.",
             "groupName": "advanced"
         },
         {
@@ -129,6 +130,9 @@
     },
     "messages": {
         "INVALID_P12": "Unable to find the certificate SHA1 hash and common name (CN). Verify that the certificate is a valid P12.",
-        "NoP12PwdWarning": "No P12 password supplied. If the P12 file requires a password, best practice is to supply it as process variable and mark it secret (lock icon)."
+        "NoP12PwdWarning": "No P12 password supplied. If the P12 file requires a password, best practice is to supply it as process variable and mark it secret (lock icon).",
+        "DefaultKeychainPasswordRequired": "Keychain password is required to use `Default Keychain`. For hosted builds, use `Temporary Keychain` instead.",
+        "P12PrivateKeyNameNotFound": "Failed to identify the private key name: %s",
+        "SetKeyPartitionListCommandNotFound": "Skipping unnecessary keychain partition_id ACL assignment on older OS. The security command 'set-key-partition-list' was added in macOS Sierra (10.12)."
     }
 }

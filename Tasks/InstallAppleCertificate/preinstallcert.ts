@@ -19,15 +19,18 @@ async function run() {
 
         let certPwd: string = tl.getInput('certPwd');
 
-        // get the P12 details - SHA1 hash and common name (CN)
+        // get the P12 SHA1 hash (thumbprint)
         let p12Hash: string = await sign.getP12SHA1Hash(certPath, certPwd);
-        // give user an option to override the CN as a workaround if we can't parse the certificate
+        // get the certificate's common name (CN), e.g. 'iPhone Developer: Chris Sidi (7RZ3N927YF)'
+        // give user an option to override the CN as a workaround if we can't parse the certificate's subject.
         let p12CN: string = tl.getInput('certSigningIdentity', false);
         if (!p12CN) {
             p12CN = await sign.getP12CommonName(certPath, certPwd);
         }
+        // get the private key's name, e.g. 'iOS Developer: Chris Sidi (Chris Sidi)'
+        let privateKeyName = await sign.getP12PrivateKeyName(certPath, certPwd);
 
-        if (!p12Hash || !p12CN) {
+        if (!p12Hash || !p12CN || !privateKeyName) {
             throw tl.loc('INVALID_P12');
         }
         tl.setTaskVariable('APPLE_CERTIFICATE_SHA1HASH', p12Hash);
@@ -46,13 +49,17 @@ async function run() {
                 keychainPwd = Math.random().toString(36);
             }
         } else if (keychain === 'default') {
+            if (!keychainPwd) {
+                throw tl.loc('DefaultKeychainPasswordRequired');
+            }
+
             keychainPath = await sign.getDefaultKeychainPath();
         } else if (keychain === 'custom') {
             keychainPath = tl.getInput('customKeychainPath', true);
         }
         tl.setTaskVariable('APPLE_CERTIFICATE_KEYCHAIN', keychainPath);
 
-        await sign.installCertInTemporaryKeychain(keychainPath, keychainPwd, certPath, certPwd, true);
+        await sign.installCertInTemporaryKeychain(keychainPath, keychainPwd, certPath, certPwd, privateKeyName, true);
 
         // set the keychain output variable.
         tl.setVariable('keychainPath', keychainPath);
