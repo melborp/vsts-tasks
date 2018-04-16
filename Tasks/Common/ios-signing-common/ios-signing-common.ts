@@ -606,10 +606,9 @@ export async function deleteCert(keychainPath: string, certSha1Hash: string): Pr
 
 export async function getP12PrivateKeyName(p12Path: string, p12Pwd: string): Promise<string> {
     //openssl pkcs12 -in <p12Path> -nocerts -passin pass:"<p12Pwd>" -passout pass:"<p12Pwd>" | grep 'friendlyName'
-    //We pipe through grep so we we don't log the private key, even encrypted.
     tl.debug('getting the P12 private key name');
-    let opensslPath: string = tl.which('openssl', true);
-    let openssl: ToolRunner = tl.tool(opensslPath);
+    const opensslPath: string = tl.which('openssl', true);
+    const openssl: ToolRunner = tl.tool(opensslPath);
     if (!p12Pwd) {
         // if password is null or not defined, set it to empty
         p12Pwd = '';
@@ -618,8 +617,10 @@ export async function getP12PrivateKeyName(p12Path: string, p12Pwd: string): Pro
     const privateKeyPassword = p12Pwd ? p12Pwd : generatePassword();
     openssl.arg(['pkcs12', '-in', p12Path, '-nocerts', '-passin', 'pass:' + p12Pwd, '-passout', 'pass:' + privateKeyPassword]);
 
-    let grepPath: string = tl.which('grep', true);
-    let grep: ToolRunner = tl.tool(grepPath);
+    //we pipe through grep so we we don't log the private key to the console.
+    //even if it's encrypted, it's noise and could cause concern for some users.
+    const grepPath: string = tl.which('grep', true);
+    const grep: ToolRunner = tl.tool(grepPath);
     grep.arg(['friendlyName']);
     openssl.pipeExecOutputToTool(grep);
 
