@@ -12,6 +12,20 @@ async function run() {
     try {
         tl.setResourcePath(path.join(__dirname, 'task.json'));
 
+        const keychain: string = tl.getInput('keychain');
+        let keychainPwd: string = tl.getInput('keychainPassword');
+
+        //check if the user supplied a keychain password
+        if (!keychainPwd) {
+            if (keychain === 'temp') {
+                //generate a random password
+                keychainPwd = Math.random().toString(36);
+            } else {
+                //tell the user they need to supply a password or switch to `Temporary keychain`
+                throw tl.loc('KeychainPasswordRequired');
+            }
+        }
+
         // download decrypted contents
         secureFileId = tl.getInput('certSecureFile', true);
         secureFileHelpers = new secureFilesCommon.SecureFileHelpers();
@@ -39,24 +53,13 @@ async function run() {
         tl.setVariable('signingIdentity', p12CN);
 
         // install the certificate in specified keychain, keychain is created if required
-        let keychain: string = tl.getInput('keychain');
-        let keychainPwd: string = tl.getInput('keychainPassword');
         let keychainPath: string;
         if (keychain === 'temp') {
             keychainPath = sign.getTempKeychainPath();
-            if (!keychainPwd) {
-                // generate a keychain password for the temporary keychain since user did not provide one
-                keychainPwd = Math.random().toString(36);
-            }
         } else if (keychain === 'default') {
             keychainPath = await sign.getDefaultKeychainPath();
         } else if (keychain === 'custom') {
             keychainPath = tl.getInput('customKeychainPath', true);
-        }
-
-        if (!keychainPwd) {
-            // keychainPwd will always be set for a temporary keychain.
-            throw tl.loc('KeychainPasswordRequired');
         }
 
         tl.setTaskVariable('APPLE_CERTIFICATE_KEYCHAIN', keychainPath);

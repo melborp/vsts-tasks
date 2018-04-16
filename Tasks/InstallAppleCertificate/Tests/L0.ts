@@ -115,4 +115,20 @@ describe('InstallAppleCertificate Suite', function () {
         assert(tr.succeeded, 'task should have succeeded');
         done();
     });
+
+    it('Defaults: Default keychain without keychain password', (done: MochaDone) => {
+        this.timeout(1000);
+
+        let tp: string = path.join(__dirname, 'L0InstallDefaultKeychainWithoutKeychainPassword.js');
+        let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
+
+        tr.run();
+
+        assert(tr.invokedToolCount === 0, 'should not run anything');
+        assert(tr.failed, 'task should have failed');
+        assert(tr.stdout.indexOf('##vso[task.issue type=error;]loc_mock_KeychainPasswordRequired') >= 0,
+            'Build should show error indicating a keychain password is required.');
+
+        done();
+    });
 });
