@@ -126,7 +126,7 @@ describe('InstallAppleCertificate Suite', function () {
 
         assert(tr.invokedToolCount === 0, 'should not run anything');
         assert(tr.failed, 'task should have failed');
-        assert(tr.stdout.indexOf('##vso[task.issue type=error;]loc_mock_KeychainPasswordRequired') >= 0,
+        assert(tr.stdout.indexOf('##vso[task.issue type=error;]Error: loc_mock_KeychainPasswordRequired') >= 0,
             'Build should show error indicating a keychain password is required.');
 
         done();

@@ -22,7 +22,7 @@ async function run() {
                 keychainPwd = Math.random().toString(36);
             } else {
                 //tell the user they need to supply a password or switch to `Temporary keychain`
-                throw tl.loc('KeychainPasswordRequired');
+                throw new Error(tl.loc('KeychainPasswordRequired'));
             }
         }
 

@@ -640,7 +640,7 @@ export async function getP12PrivateKeyName(p12Path: string, p12Pwd: string): Pro
     await openssl.exec();
     tl.debug('P12 private key name = ' + privateKeyName);
     if (!privateKeyName) {
-        throw tl.loc('P12PrivateKeyNameNotFound', p12Path);
+        throw new Error(tl.loc('P12PrivateKeyNameNotFound', p12Path));
     }
 
     return privateKeyName;
