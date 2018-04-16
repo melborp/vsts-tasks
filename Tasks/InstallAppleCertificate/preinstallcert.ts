@@ -49,14 +49,16 @@ async function run() {
                 keychainPwd = Math.random().toString(36);
             }
         } else if (keychain === 'default') {
-            if (!keychainPwd) {
-                throw tl.loc('DefaultKeychainPasswordRequired');
-            }
-
             keychainPath = await sign.getDefaultKeychainPath();
         } else if (keychain === 'custom') {
             keychainPath = tl.getInput('customKeychainPath', true);
         }
+
+        if (!keychainPwd) {
+            // keychainPwd will always be set for a temporary keychain.
+            throw tl.loc('KeychainPasswordRequired');
+        }
+
         tl.setTaskVariable('APPLE_CERTIFICATE_KEYCHAIN', keychainPath);
 
         await sign.installCertInTemporaryKeychain(keychainPath, keychainPwd, certPath, certPwd, privateKeyName, true);

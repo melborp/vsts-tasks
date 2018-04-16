@@ -614,7 +614,9 @@ export async function getP12PrivateKeyName(p12Path: string, p12Pwd: string): Pro
         // if password is null or not defined, set it to empty
         p12Pwd = '';
     }
-    openssl.arg(['pkcs12', '-in', p12Path, '-nocerts', '-passin', 'pass:' + p12Pwd, '-passout', 'pass:' + p12Pwd]);
+    // since we can't suppress the private key bytes, encrypt them before we pass them to grep.
+    const privateKeyPassword = p12Pwd ? p12Pwd : generatePassword();
+    openssl.arg(['pkcs12', '-in', p12Path, '-nocerts', '-passin', 'pass:' + p12Pwd, '-passout', 'pass:' + privateKeyPassword]);
 
     let grepPath: string = tl.which('grep', true);
     let grep: ToolRunner = tl.tool(grepPath);
@@ -622,9 +624,12 @@ export async function getP12PrivateKeyName(p12Path: string, p12Pwd: string): Pro
     openssl.pipeExecOutputToTool(grep);
 
     let privateKeyName: string;
-    openssl.on('stdline', function (line: string) {
-        if (line) {
-            const match = line.match(/friendlyName: (.*)/);
+    openssl.on('stdout', function (data) {
+        if (data) {
+            // find the private key name
+            data = data.toString().trim();
+
+            const match = data.match(/friendlyName: (.*)/);
             if (match && match[1]) {
                 privateKeyName = match[1].trim();
             }
@@ -677,4 +682,8 @@ async function setKeyPartitionList(keychainPath: string, keychainPwd: string, pr
             }
         }
     }
+}
+
+function generatePassword(): string {
+    return Math.random().toString(36);
 }

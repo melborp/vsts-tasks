@@ -131,7 +131,7 @@
     "messages": {
         "INVALID_P12": "Unable to find the certificate SHA1 hash and common name (CN). Verify that the certificate is a valid P12.",
         "NoP12PwdWarning": "No P12 password supplied. If the P12 file requires a password, best practice is to supply it as process variable and mark it secret (lock icon).",
-        "DefaultKeychainPasswordRequired": "Keychain password is required to use `Default Keychain`. For hosted builds, use `Temporary Keychain` instead.",
+        "KeychainPasswordRequired": "Keychain password is required to use `Default Keychain` or `Custom Keychain`. For hosted builds, use `Temporary Keychain` instead.",
         "P12PrivateKeyNameNotFound": "Failed to identify the private key name: %s",
         "SetKeyPartitionListCommandNotFound": "Skipping unnecessary keychain partition_id ACL assignment on older OS. The security command 'set-key-partition-list' was added in macOS Sierra (10.12)."
     }

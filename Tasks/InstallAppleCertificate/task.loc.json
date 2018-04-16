@@ -131,7 +131,7 @@
   "messages": {
     "INVALID_P12": "ms-resource:loc.messages.INVALID_P12",
     "NoP12PwdWarning": "ms-resource:loc.messages.NoP12PwdWarning",
-    "DefaultKeychainPasswordRequired": "ms-resource:loc.messages.DefaultKeychainPasswordRequired",
+    "KeychainPasswordRequired": "ms-resource:loc.messages.KeychainPasswordRequired",
     "P12PrivateKeyNameNotFound": "ms-resource:loc.messages.P12PrivateKeyNameNotFound",
     "SetKeyPartitionListCommandNotFound": "ms-resource:loc.messages.SetKeyPartitionListCommandNotFound"
   }
